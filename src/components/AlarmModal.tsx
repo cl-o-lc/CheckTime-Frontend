@@ -75,6 +75,8 @@ export default function AlarmModal({ onConfirm, onClose }: AlarmModalProps) {
     });
 
     alert('알림이 설정되었습니다.');
+
+    onClose(); // 설정 후 모달 닫기
   };
 
   return (

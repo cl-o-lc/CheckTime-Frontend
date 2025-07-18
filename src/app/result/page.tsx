@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, Clock, Info } from 'lucide-react';
 import AlarmModal, { AlarmData } from '@/components/AlarmModal';
 import { useSearchParams } from 'next/navigation';
+import KoreanStandardTime from '@/components/KoreanStandaradTime';
 
 // RTTResult와 RTTData 인터페이스는 api/network/rtt에서 사용되므로,
 // api/time/compare가 직접 이 데이터를 반환하지 않는다면 필요 없을 수 있습니다.
@@ -58,47 +59,6 @@ interface ServerTimeData {
     ntpAccuracy: string;
   };
 }
-
-// function ServerSearchForm({ onSubmit }: { onSubmit: (url: string) => void }) {
-//   const [url, setUrl] = useState('');
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const handleSubmit = async () => {
-//     if (!url.trim()) return;
-//     setIsLoading(true);
-//     await onSubmit(url.trim());
-//     setIsLoading(false);
-//   };
-
-//   const handleKeyPress = (e: React.KeyboardEvent) => {
-//     if (e.key === 'Enter') {
-//       handleSubmit();
-//     }
-//   };
-
-//   return (
-//     <div className="w-full max-w-2xl mx-auto mb-8">
-//       <div className="relative">
-//         <input
-//           type="url"
-//           value={url}
-//           onChange={(e) => setUrl(e.target.value)}
-//           onKeyPress={handleKeyPress}
-//           placeholder="지금 시간 확인이 필요한 URL을 입력해 주세요"
-//           className="w-full px-4 py-4 pr-12 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-//           disabled={isLoading}
-//         />
-//         <button
-//           onClick={handleSubmit}
-//           disabled={isLoading || !url.trim()}
-//           className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-blue-500 disabled:opacity-50"
-//         >
-//           <Search className="w-6 h-6" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
 
 function TimeDisplay({
   time,
@@ -348,79 +308,6 @@ function ServerTimeResult({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function KoreanStandardTime({
-  showMilliseconds,
-}: {
-  showMilliseconds: boolean;
-}) {
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setCurrentTime(new Date());
-
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 10); // 10ms마다 업데이트하여 밀리초 표시
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (date: Date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    const millis = String(date.getMilliseconds()).padStart(3, '0');
-    return `${hours}:${minutes}:${seconds}.${millis}`;
-  };
-
-  if (!mounted || !currentTime) {
-    return (
-      <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-8">
-        <div className="text-center mb-4">
-          <div className="text-gray-600 mb-2">
-            <span className="font-semibold text-blue-600">한국 표준시</span>
-            <span className="text-sm ml-2">(KST)</span>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <div className="text-6xl font-bold text-gray-400">--:--:--.---</div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-8">
-      <div className="text-center mb-4">
-        <div className="text-gray-600 mb-2">
-          <span className="font-semibold text-blue-600">한국 표준시</span>
-          <span className="text-sm ml-2">(KST)</span>
-        </div>
-      </div>
-
-      <TimeDisplay
-        time={formatTime(currentTime)}
-        label=""
-        showMilliseconds={showMilliseconds}
-      />
-
-      <div className="text-center mt-4">
-        <div className="text-gray-500 text-sm">
-          {currentTime.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long',
-          })}
-        </div>
-      </div>
     </div>
   );
 }

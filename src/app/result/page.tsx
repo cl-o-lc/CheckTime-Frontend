@@ -7,6 +7,7 @@ import AlarmModal, { AlarmData } from '@/components/AlarmModal';
 import { useSearchParams } from 'next/navigation';
 import KoreanStandardTime from '@/components/KoreanStandaradTime';
 import ServerSearchForm from '@/components/ServerSearchForm';
+import AlarmCountdown from '@/components/AlarmCountdown';
 
 // RTTResult와 RTTData 인터페이스는 api/network/rtt에서 사용되므로,
 // api/time/compare가 직접 이 데이터를 반환하지 않는다면 필요 없을 수 있습니다.
@@ -114,21 +115,18 @@ function ServerTimeResult({
   data,
   onRefresh,
   showMilliseconds,
+  alarmData,
+  onAlarmConfirm,
 }: {
   data: ServerTimeData;
   onRefresh: () => void;
   showMilliseconds: boolean;
+  alarmData?: AlarmData | null; // 알림 데이터가 있을 경우에만 AlarmCountdown 사용(선택적 props)
+  onAlarmConfirm: (data: AlarmData) => void; // 알림 설정 완료 핸들러
 }) {
   const [currentServerTime, setCurrentServerTime] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
-
-  // 알림 설정 완료 후 모달 닫기
-  const handleConfirm = (data: AlarmData) => {
-    console.log('알림 설정 값:', data);
-    setShowModal(false);
-  };
 
   // 모달 배경 클릭 시 닫기
   const handleClose = () => {
@@ -267,6 +265,9 @@ function ServerTimeResult({
           </div>
         )}
 
+      {/* 알람 카운트다운 컴포넌트 */}
+      {alarmData && <AlarmCountdown alarm={alarmData} />}
+
       {/* 새로고침 버튼 */}
       <div className="text-center mb-8">
         <button
@@ -306,7 +307,7 @@ function ServerTimeResult({
 
         {/* 모달은 별도로 렌더링 (button 밖에서) */}
         {showModal && (
-          <AlarmModal onConfirm={handleConfirm} onClose={handleClose} />
+          <AlarmModal onConfirm={onAlarmConfirm} onClose={handleClose} />
         )}
       </div>
 
@@ -331,6 +332,12 @@ export default function CheckTimeApp() {
   const [showMilliseconds, setShowMilliseconds] = useState(true);
   const searchParams = useSearchParams();
   const initialUrl = searchParams.get('url');
+
+  const [alarmData, setAlarmData] = useState<AlarmData | null>(null);
+
+  const handleAlarmConfirm = (data: AlarmData) => {
+    setAlarmData(data);
+  };
 
   const handleSubmit = async (url: string) => {
     setIsLoading(true);
@@ -460,6 +467,8 @@ export default function CheckTimeApp() {
             data={serverTimeData}
             onRefresh={handleRefresh}
             showMilliseconds={showMilliseconds}
+            alarmData={alarmData} // 알람 데이터가 있을 경우에만 AlarmCountdown 사용
+            onAlarmConfirm={handleAlarmConfirm}
           />
         </div>
       )}

@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, RefreshCw, Clock, Info } from 'lucide-react';
+import AlarmModal, { AlarmData } from '@/components/AlarmModal';
 
 // RTTResult와 RTTData 인터페이스는 api/network/rtt에서 사용되므로,
 // api/time/compare가 직접 이 데이터를 반환하지 않는다면 필요 없을 수 있습니다.
@@ -159,6 +160,19 @@ function ServerTimeResult({
   const [currentServerTime, setCurrentServerTime] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+
+  // 알림 설정 완료 후 모달 닫기
+  const handleConfirm = (data: AlarmData) => {
+    console.log('알림 설정 값:', data);
+    setShowModal(false);
+  };
+
+  // 모달 배경 클릭 시 닫기
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
   useEffect(() => {
     setMounted(true);
 
@@ -310,10 +324,18 @@ function ServerTimeResult({
 
       {/* 상세 정보 버튼 */}
       <div className="text-center">
-        <button className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors text-lg font-medium">
+        <button
+          className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors text-lg font-medium"
+          onClick={() => setShowModal(true)}
+        >
           <Info className="w-5 h-5" />
           정확한 타이밍에 클릭을 도와줄까요?
         </button>
+
+        {/* 모달은 별도로 렌더링 (button 밖에서) */}
+        {showModal && (
+          <AlarmModal onConfirm={handleConfirm} onClose={handleClose} />
+        )}
       </div>
 
       {/* 네트워크 정보 (작게 표시) - 이제 networkInfo 사용 */}

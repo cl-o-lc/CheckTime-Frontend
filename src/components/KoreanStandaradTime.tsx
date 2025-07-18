@@ -64,7 +64,7 @@ export default function KoreanStandardTime({
       </div>
 
       <div className="text-center">
-        <div className="text-6xl font-bold text-gray-800 font-mono">
+        <div className="flex items-center justify-center gap-4 text-6xl font-bold text-gray-800">
           {(() => {
             const [h, m, s, ms] = formatTime(time).split(/[:.]/);
             return (
@@ -80,6 +80,22 @@ export default function KoreanStandardTime({
                     <span className="text-4xl">{ms}</span>
                   </>
                 )}
+                <span className="flex items-center text-2xl text-gray-500 ml-2 gap-2">
+                  밀리초
+                  <input
+                    type="checkbox"
+                    checked={showMilliseconds}
+                    onChange={(e) =>
+                      typeof window !== 'undefined' &&
+                      document.dispatchEvent(
+                        new CustomEvent('toggleMilliseconds', {
+                          detail: e.target.checked,
+                        }),
+                      )
+                    }
+                    className="w-4 h-4"
+                  />
+                </span>
               </>
             );
           })()}

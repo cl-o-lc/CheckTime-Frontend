@@ -18,11 +18,14 @@ export default function Home() {
         지금, 서버 시간은 몇시인가요?
       </h2>
 
-      {/* 검색 input + 버튼 */}
-      <ServerSearchForm onSubmit={handleSubmit} />
-
-      {/* 한국 표준 시간 컴포넌트 */}
-      <KoreanStandardTime />
+      <div className="mt-8 w-full max-w-2xl">
+        {/* 검색 input + 버튼 */}
+        <ServerSearchForm onSubmit={handleSubmit} />
+      </div>
+      <div className="mt-8 max-w-3xl w-full">
+        {/* 한국 표준 시간 컴포넌트 */}
+        <KoreanStandardTime />
+      </div>
     </main>
   );
 }

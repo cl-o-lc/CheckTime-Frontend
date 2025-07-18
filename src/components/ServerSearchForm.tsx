@@ -25,14 +25,14 @@ export default function ServerSearchForm({ onSubmit }: ServerSearchFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-8 flex w-full max-w-2xl items-center gap-2"
+      className="mt-2 flex w-full max-w-2xl items-center gap-2"
     >
       <Input
         type="text"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         placeholder="서버 시간 확인이 필요한 url 주소를 검색해 보세요"
-        className="flex-1 bg-white shadow-md placeholder:text-gray-400"
+        className="flex-1 bg-white shadow-md placeholder:text-gray-400 py-4 text-lg h-14"
       />
 
       <Button

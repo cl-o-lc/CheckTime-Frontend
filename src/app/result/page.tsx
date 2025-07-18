@@ -6,6 +6,7 @@ import { RefreshCw, Clock, Info } from 'lucide-react';
 import AlarmModal, { AlarmData } from '@/components/AlarmModal';
 import { useSearchParams } from 'next/navigation';
 import KoreanStandardTime from '@/components/KoreanStandaradTime';
+import ServerSearchForm from '@/components/ServerSearchForm';
 
 // RTTResult와 RTTData 인터페이스는 api/network/rtt에서 사용되므로,
 // api/time/compare가 직접 이 데이터를 반환하지 않는다면 필요 없을 수 있습니다.
@@ -431,9 +432,16 @@ export default function CheckTimeApp() {
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8">
       {/* 헤더 */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-blue-600 mb-2">Check Time</h1>
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-blue-600">Check Time</h1>
       </div>
+
+      {/* 서버 시간 검색 폼 */}
+      <div className="mt-4 flex justify-center mb-4">
+        <ServerSearchForm onSubmit={(url) => handleSubmit(url)} />
+      </div>
+
+      <hr className="my-4 border-t border-gray-300 w-full max-w-4xl mx-auto" />
 
       {/* 로딩 상태 */}
       {isLoading && (

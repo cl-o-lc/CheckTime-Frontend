@@ -79,13 +79,16 @@ export default function AlarmModal({ onConfirm, onClose }: AlarmModalProps) {
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-80 flex justify-center items-center z-50">
-      {/* 모달 배경 클릭 시 닫기 */}
+      모달 배경 클릭 시 닫기
       <div
         className="fixed inset-0 bg-gray-500 bg-opacity-80 flex justify-center items-center z-50"
         onClick={onClose}
       >
         {/*실제 모달 박스*/}
-        <div className="bg-gray-100 p-8 rounded-lg shadow-xl w-[400px]">
+        <div
+          className="bg-gray-100 p-8 rounded-lg shadow-xl w-[400px]"
+          onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
+        >
           <h2 className="text-2xl font-bold mb-6 text-center">⏰ 알림 설정</h2>
 
           <div className="mb-4">

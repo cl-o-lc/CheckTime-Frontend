@@ -2,8 +2,15 @@
 
 import ServerSearchForm from '@/components/ServerSearchForm';
 import KoreanStandardTime from '@/components/KoreanStandaradTime';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleSubmit = (url: string) => {
+    router.push(`/result?url=${encodeURIComponent(url)}`);
+  };
+
   return (
     <main className="flex min-h-screen flex-col bg-primary items-center justify-center px-4">
       <h1 className="text-5xl font-bold text-brand-blue-500">Check Time</h1>
@@ -12,12 +19,7 @@ export default function Home() {
       </h2>
 
       {/* 검색 input + 버튼 */}
-      <ServerSearchForm
-        onSubmit={(url) => {
-          // URL 제출 처리 로직
-          console.log('Submitted URL:', url);
-        }}
-      />
+      <ServerSearchForm onSubmit={handleSubmit} />
 
       {/* 한국 표준 시간 컴포넌트 */}
       <KoreanStandardTime />

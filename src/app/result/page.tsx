@@ -2,8 +2,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, RefreshCw, Clock, Info } from 'lucide-react';
+import { RefreshCw, Clock, Info } from 'lucide-react';
 import AlarmModal, { AlarmData } from '@/components/AlarmModal';
+import { useSearchParams } from 'next/navigation';
 
 // RTTResult와 RTTData 인터페이스는 api/network/rtt에서 사용되므로,
 // api/time/compare가 직접 이 데이터를 반환하지 않는다면 필요 없을 수 있습니다.
@@ -58,46 +59,46 @@ interface ServerTimeData {
   };
 }
 
-function ServerSearchForm({ onSubmit }: { onSubmit: (url: string) => void }) {
-  const [url, setUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+// function ServerSearchForm({ onSubmit }: { onSubmit: (url: string) => void }) {
+//   const [url, setUrl] = useState('');
+//   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!url.trim()) return;
-    setIsLoading(true);
-    await onSubmit(url.trim());
-    setIsLoading(false);
-  };
+//   const handleSubmit = async () => {
+//     if (!url.trim()) return;
+//     setIsLoading(true);
+//     await onSubmit(url.trim());
+//     setIsLoading(false);
+//   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
-  };
+//   const handleKeyPress = (e: React.KeyboardEvent) => {
+//     if (e.key === 'Enter') {
+//       handleSubmit();
+//     }
+//   };
 
-  return (
-    <div className="w-full max-w-2xl mx-auto mb-8">
-      <div className="relative">
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="지금 시간 확인이 필요한 URL을 입력해 주세요"
-          className="w-full px-4 py-4 pr-12 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-          disabled={isLoading}
-        />
-        <button
-          onClick={handleSubmit}
-          disabled={isLoading || !url.trim()}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-blue-500 disabled:opacity-50"
-        >
-          <Search className="w-6 h-6" />
-        </button>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="w-full max-w-2xl mx-auto mb-8">
+//       <div className="relative">
+//         <input
+//           type="url"
+//           value={url}
+//           onChange={(e) => setUrl(e.target.value)}
+//           onKeyPress={handleKeyPress}
+//           placeholder="지금 시간 확인이 필요한 URL을 입력해 주세요"
+//           className="w-full px-4 py-4 pr-12 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+//           disabled={isLoading}
+//         />
+//         <button
+//           onClick={handleSubmit}
+//           disabled={isLoading || !url.trim()}
+//           className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-blue-500 disabled:opacity-50"
+//         >
+//           <Search className="w-6 h-6" />
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
 
 function TimeDisplay({
   time,
@@ -329,7 +330,7 @@ function ServerTimeResult({
           onClick={() => setShowModal(true)}
         >
           <Info className="w-5 h-5" />
-          정확한 타이밍에 클릭을 도와줄까요?
+          정확한 타이밍에 클릭을 도와드릴까요?
         </button>
 
         {/* 모달은 별도로 렌더링 (button 밖에서) */}
@@ -430,17 +431,8 @@ export default function CheckTimeApp() {
     null,
   );
   const [showMilliseconds, setShowMilliseconds] = useState(true);
-
-  useEffect(() => {
-    const listener = (e: Event) => {
-      const customEvent = e as CustomEvent<boolean>;
-      if (typeof customEvent.detail === 'boolean') {
-        setShowMilliseconds(customEvent.detail);
-      }
-    };
-    document.addEventListener('toggleMilliseconds', listener);
-    return () => document.removeEventListener('toggleMilliseconds', listener);
-  }, []);
+  const searchParams = useSearchParams();
+  const initialUrl = searchParams.get('url');
 
   const handleSubmit = async (url: string) => {
     setIsLoading(true);
@@ -470,7 +462,7 @@ export default function CheckTimeApp() {
 
           // api/time/compare 응답에서 필요한 데이터 추출
           setServerTimeData({
-            url: url,
+            url,
             clientTime: clientTimeAtRequest, // 클라이언트 요청 시작 시의 시간
             serverTime: apiData.timeComparison?.correctedTargetTime, // 보정된 타겟 서버 시간
             timeDifference: apiData.timeComparison?.timeDifference, // 우리 서버 시간 - 타겟 서버 시간 (백엔드에서 계산된 값)
@@ -486,14 +478,14 @@ export default function CheckTimeApp() {
           });
         } else {
           setServerTimeData({
-            url: url,
+            url,
             clientTime: clientTimeAtRequest,
             error: result.error || '서버 시간 비교 실패',
           });
         }
       } else {
         setServerTimeData({
-          url: url,
+          url,
           clientTime: clientTimeAtRequest,
           error: `API 통신 오류: ${compareResponse.status} ${compareResponse.statusText}`,
         });
@@ -501,7 +493,7 @@ export default function CheckTimeApp() {
     } catch (error: unknown) {
       console.error('서버 시간 확인 실패:', error);
       setServerTimeData({
-        url: url,
+        url,
         clientTime: new Date().toISOString(),
         error:
           error instanceof Error
@@ -512,6 +504,26 @@ export default function CheckTimeApp() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const listener = (e: Event) => {
+      const customEvent = e as CustomEvent<boolean>;
+      if (typeof customEvent.detail === 'boolean') {
+        setShowMilliseconds(customEvent.detail);
+      }
+    };
+
+    // URL이 있을 때만 서버 요청
+    if (
+      initialUrl &&
+      typeof initialUrl === 'string' &&
+      initialUrl.trim() !== ''
+    ) {
+      handleSubmit(initialUrl);
+    }
+    document.addEventListener('toggleMilliseconds', listener);
+    return () => document.removeEventListener('toggleMilliseconds', listener);
+  }, [initialUrl]);
 
   const handleRefresh = () => {
     if (serverTimeData) {
@@ -525,9 +537,6 @@ export default function CheckTimeApp() {
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-blue-600 mb-2">Check Time</h1>
       </div>
-
-      {/* 검색 폼 */}
-      <ServerSearchForm onSubmit={handleSubmit} />
 
       {/* 로딩 상태 */}
       {isLoading && (

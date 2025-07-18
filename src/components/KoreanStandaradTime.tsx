@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-export default function KoreanStandardTime() {
+export default function KoreanStandardTime({
+  showMilliseconds = true,
+}: {
+  showMilliseconds?: boolean;
+}) {
   const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -33,28 +37,65 @@ export default function KoreanStandardTime() {
   }, []);
 
   if (!time) {
-    return <p className="mt-4 text-gray-400 text-lg">시간을 불러오는 중...</p>;
+    return (
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="text-center text-gray-400 text-xl">
+          시간을 불러오는 중...
+        </div>
+      </div>
+    );
   }
 
-  const hours = String(time.getHours()).padStart(2, '0');
-  const minutes = String(time.getMinutes()).padStart(2, '0');
-  const seconds = String(time.getSeconds()).padStart(2, '0');
-  const millis = String(time.getMilliseconds()).padStart(3, '0');
+  const formatTime = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const millis = String(date.getMilliseconds()).padStart(3, '0');
+    return `${hours}:${minutes}:${seconds}.${millis}`;
+  };
 
   return (
-    <>
-      <p className="mt-10 text-gray-600 font-medium text-base">
-        한국 표준시간 (<span className="font-semibold">자체 서버 기준</span>)
-      </p>
-      <div className="mt-6 flex items-center space-x-6 text-5xl font-mono">
-        <span>{hours}</span>
-        <span>:</span>
-        <span>{minutes}</span>
-        <span>:</span>
-        <span>{seconds}</span>
-        <span>:</span>
-        <span>{millis}</span>
+    <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <div className="text-center mb-4">
+        <div className="text-gray-600 mb-2">
+          <span className="font-semibold text-blue-600">한국 표준시</span>
+          <span className="text-sm ml-2">(KST)</span>
+        </div>
       </div>
-    </>
+
+      <div className="text-center">
+        <div className="text-6xl font-bold text-gray-800 font-mono">
+          {(() => {
+            const [h, m, s, ms] = formatTime(time).split(/[:.]/);
+            return (
+              <>
+                <span>{h}</span>
+                <span className="text-gray-400">:</span>
+                <span>{m}</span>
+                <span className="text-gray-400">:</span>
+                <span>{s}</span>
+                {showMilliseconds && (
+                  <>
+                    <span className="text-gray-400">:</span>
+                    <span className="text-4xl">{ms}</span>
+                  </>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      </div>
+
+      <div className="text-center mt-4">
+        <div className="text-gray-500 text-sm">
+          {time.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+          })}
+        </div>
+      </div>
+    </div>
   );
 }

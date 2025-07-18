@@ -312,7 +312,7 @@ function ServerTimeResult({
       <div className="text-center">
         <button className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors text-lg font-medium">
           <Info className="w-5 h-5" />
-          정확한 타이밍에 클릭할 도와줄까요?
+          정확한 타이밍에 클릭을 도와줄까요?
         </button>
       </div>
 

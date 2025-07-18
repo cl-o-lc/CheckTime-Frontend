@@ -247,9 +247,19 @@ function ServerTimeResult({
             <div className="max-w-md mx-auto bg-green-50 border-2 border-green-200 rounded-xl p-6">
               <div className="text-center">
                 <div className="text-green-800 font-medium mb-2">
-                  {serverName} 서버와의 시간 차는{' '}
-                  {getTimeDifferenceText(data.timeComparison.timeDifference)}
-                  입니다.
+                  {serverName} 서버가{' '}
+                  <span className="font-bold">
+                    {getTimeDifferenceText(
+                      Math.abs(data.timeComparison.timeDifference),
+                    )}
+                  </span>{' '}
+                  더{' '}
+                  <span className="font-bold">
+                    {data.timeComparison.direction === 'ahead'
+                      ? '빠릅니다'
+                      : '느립니다'}
+                  </span>
+                  .
                 </div>
               </div>
             </div>

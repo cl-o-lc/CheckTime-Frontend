@@ -168,7 +168,7 @@ function ServerTimeResult({
     }
 
     const absDiff = Math.abs(diff);
-    const direction = diff > 0 ? '+' : '';
+    const direction = diff > 0 ? '' : '';
 
     if (absDiff < 1000) {
       return `${direction}${diff.toFixed(2)}ms`;
